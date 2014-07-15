@@ -1,0 +1,2 @@
+#ROOTIMAGE=/sdcard/LinuxOnAndroid/....img
+NEWROOT=/data/local/debian-8.LARGE
