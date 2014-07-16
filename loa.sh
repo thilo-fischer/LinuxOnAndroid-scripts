@@ -14,22 +14,7 @@ function print_usage {
 	echo "Usage: $(basename "$0") [--startup|--shutdown|--status] [VARIANT]"
 }
 
-function die {
-	echo "$1" "Abort." >&2
-	exit 1
-}
-
-function scripting_error {
-	die "Scripting error."
-}
-
-function variant_file {
-  SUBDIR="$VARIANT"
-  while [ "$SUBDIR" != "." -a ! -f "$DIR/$SUBDIR/$1" ]; do
-    SUBDIR="$(dirname "$SUBDIR")"
-  done
-  echo "$DIR/$SUBDIR/$1"
-}
+. helper-functions.sh
 
 # TODO detect when incompatible arguments are given on the command line
 while [ $# -gt 0 ]; do
@@ -57,34 +42,51 @@ done
 . "$(variant_file envvar)"
 
 case $TASK in
+
 status)
 "$(variant lostatus.sh)"
 echo -n "LoA root fs: "
 grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
 "$(variant mountstatus.sh)"
 ;;
+
+
 startup)
 if [ -n "$ROOTIMAGE" ]; then
 	LOOPDEVICE="$("$(variant_file losetup.sh)" "$ROOTIMAGE")"
-	if [ $? -ne 0 ]; then
-		die "Failed to setup the according loop device."
-	fi
+	die_on_error "failed to set up the according loop device"
+	
 	grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts > /dev/null || mount "$LOOPDEVICE" "$NEWROOT"
-	#grep "$LOOPDEVICE[[:space:]][[:space:]]*$NEWROOT" /proc/mounts > /dev/null || mount "$LOOPDEVICE" "$NEWROOT"
-	if [ $? -ne 0 ]; then
-		die "Failed to mount the loop device."
-	fi
+	die_on_error "failed to mount the loop device"
 fi
+
 "$(variant_file mount.sh)" "$NEWROOT"
-if [ $? -ne 0 ]; then
-	die "Failed processing the configured mount commands."
+die_on_error "failed processing the configured mount commands"
+;;
+
+
+shell)
+"$(variant chroot.sh)" "$NEWROOT"
+;;
+
+
+shutdown)
+# TODO Check for open chroot-shells ?
+"$(variant_file umount.sh)" "$NEWROOT"
+die_on_error "failed processing the configured umount commands"
+
+if [ -n "$ROOTIMAGE" ]; then	
+	if grep -E "^\s*\w+\s+$NEWROOT\s" /proc/mounts > /dev/null; then
+		umount "$NEWROOT"
+		die_on_error "failed to unmount the loop device"
+	fi
+  "$(variant_file loteardown.sh)" "$ROOTIMAGE"
+	die_on_error "failed to tear down the according loop device"
 fi
 ;;
-shell)
-"$(variant chroot.sh)"
-;;
-shutdown)
-;;
+
+
 *)
 scripting_error
+
 esac
