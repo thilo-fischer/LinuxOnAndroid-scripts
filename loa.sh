@@ -5,16 +5,26 @@
 # setup by configuring those smaller scripts. Several LoA environments can be maintained in parallel
 # by putting the specific parts configurations for one environment into dedicated variant directory.
 
-TASK="shell"
-VARIANT="."
+SCRIPTDIR="$(dirname "$0")"
+. "$SCRIPTDIR/helper-functions.sh"
 
-DIR="$(dirname "$0")"
+
+# will only work if busybox is available
+BBDIR="$(which busybox)"
+die_on_error "Could not find busybox in PATH."
+# favor busybox commands over Android specific vensions
+PATH="$BBDIR:$PATH"
 
 function print_usage {
-	echo "Usage: $(basename "$0") [--startup|--shutdown|--status] [VARIANT]"
+	echo "Usage: $(basename "$0") [--startup|--shutdown|--status] [VARIANT] [--chroot [PROG ARGS]]"
 }
 
-. helper-functions.sh
+#
+# Parse commandline
+#
+
+TASK="shell"
+VARIANT="."
 
 # TODO detect when incompatible arguments are given on the command line
 while [ $# -gt 0 ]; do
@@ -32,6 +42,11 @@ while [ $# -gt 0 ]; do
 	--status|-t)
 	TASK="status"
 	;;
+	--chroot|-r)
+	TASK="chroot"
+	shift
+	break
+	;;
 	*)
 	VARIANT="$1"
 	;;
@@ -39,50 +54,59 @@ while [ $# -gt 0 ]; do
 	shift
 done
 
+
+#
+# parse "config file"
+#
+
 . "$(variant_file envvar)"
+
+
+#
+# accomplish task (as given via commandline and envvar file)
+#
 
 case $TASK in
 
 status)
-"$(variant lostatus.sh)"
+# fixme
+"$(variant_file lostatus.sh)"
 echo -n "LoA root fs: "
 grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
-"$(variant mountstatus.sh)"
+"$(variant_file mountstatus.sh)"
 ;;
 
 
 startup)
 if [ -n "$ROOTIMAGE" ]; then
-	LOOPDEVICE="$("$(variant_file losetup.sh)" "$ROOTIMAGE")"
-	die_on_error "failed to set up the according loop device"
-	
-	grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts > /dev/null || mount "$LOOPDEVICE" "$NEWROOT"
+	"$(call_script mount-image.sh)" "$ROOTIMAGE" "$NEWROOT"
 	die_on_error "failed to mount the loop device"
 fi
 
-"$(variant_file mount.sh)" "$NEWROOT"
+"$(call_script mount.sh)" "$NEWROOT"
 die_on_error "failed processing the configured mount commands"
-;;
-
-
-shell)
-"$(variant chroot.sh)" "$NEWROOT"
 ;;
 
 
 shutdown)
 # TODO Check for open chroot-shells ?
-"$(variant_file umount.sh)" "$NEWROOT"
+"$(call_script umount.sh)" "$NEWROOT"
 die_on_error "failed processing the configured umount commands"
 
 if [ -n "$ROOTIMAGE" ]; then	
-	if grep -E "^\s*\w+\s+$NEWROOT\s" /proc/mounts > /dev/null; then
-		umount "$NEWROOT"
-		die_on_error "failed to unmount the loop device"
-	fi
-  "$(variant_file loteardown.sh)" "$ROOTIMAGE"
+  "$(call_script umount-image.sh)" "$ROOTIMAGE"
 	die_on_error "failed to tear down the according loop device"
 fi
+;;
+
+
+chroot)
+"$(call_script chroot.sh)" "$NEWROOT" $*
+;;
+
+
+shell)
+"$(call_script shell.sh)" "$NEWROOT"
 ;;
 
 

@@ -10,6 +10,7 @@ invoke umount $NEWROOT/dev/pts
 invoke umount $NEWROOT/proc
 invoke umount $NEWROOT/sys
 invoke umount $NEWROOT/sdcard
+invoke umount $NEWROOT/tmp
 
 #invoke umount $NEWROOT/root/cfg
 

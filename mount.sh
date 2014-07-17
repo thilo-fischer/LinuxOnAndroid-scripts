@@ -8,6 +8,7 @@ invoke mount -t devpts devpts $NEWROOT/dev/pts
 invoke mount -t proc proc $NEWROOT/proc
 invoke mount -t sysfs sysfs $NEWROOT/sys
 invoke mount -o bind /sdcard $NEWROOT/sdcard
+invoke mount -t tmpfs tmpfs $NEWROOT/tmp # ??
 
 #if [[ ! -d $NEWROOT/root/cfg ]]; then mkdir $NEWROOT/root/cfg; fi
 #invoke mount -o bind $(dirname $ROOTIMAGE) $NEWROOT/root/cfg

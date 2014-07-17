@@ -26,5 +26,11 @@ function variant_file {
   while [ "$SUBDIR" != "." -a ! -f "$DIR/$SUBDIR/$1" ]; do
     SUBDIR="$(dirname "$SUBDIR")"
   done
-  echo "$DIR/$SUBDIR/$1"
+  echo "$SCRIPTDIR/$SUBDIR/$1"
+}
+
+function call_script {
+  SCRIPT="$1"
+  shift
+  "$(variant_file "$SCRIPT" "$SCRIPTDIR" "$VARIANT" $*)"
 }
