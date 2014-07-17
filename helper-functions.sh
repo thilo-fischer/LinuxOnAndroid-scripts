@@ -32,5 +32,5 @@ function variant_file {
 function call_script {
   SCRIPT="$1"
   shift
-  "$(variant_file "$SCRIPT" "$SCRIPTDIR" "$VARIANT" $*)"
+  "$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" $*
 }

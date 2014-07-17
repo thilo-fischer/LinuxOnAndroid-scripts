@@ -1,9 +1,8 @@
 #!/bin/bash
 
-IMAGEFILE="$1"
+. "$1/scriptenv.sh"
 
-SCRIPTDIR="$(dirname "$0")"
-. "$SCRIPTDIR/helper-functions.sh"
+IMAGEFILE="$1"
 
 # todo: seems losetup -a might cut off the end of long filenames, this might get a problem
 # todo: grep -F "$IMAGEFILE" would also match prefix"$IMAGEFILE"postfix :(

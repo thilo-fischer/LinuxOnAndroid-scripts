@@ -1,10 +1,10 @@
 #!/bin/sh
 
+. "$1/scriptenv.sh"
+
 # which unmounts are necessary and which will be done implicitly when unmounting NEWROOT ? (esp. binds, proc etc.)
 
 NEWROOT="$1"
-
-. helper-functions.sh
 
 invoke umount $NEWROOT/dev/pts
 invoke umount $NEWROOT/proc

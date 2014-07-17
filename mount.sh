@@ -1,8 +1,6 @@
 #!/bin/sh
 
-NEWROOT="$1"
-
-. helper-functions.sh
+. "$1/scriptenv.sh"
 
 invoke mount -t devpts devpts $NEWROOT/dev/pts
 invoke mount -t proc proc $NEWROOT/proc

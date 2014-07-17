@@ -1,10 +1,9 @@
 #!/bin/bash
 
+. "$1/scriptenv.sh"
+
 ROOTIMAGE="$1"
 NEWROOT="$2"
-
-SCRIPTDIR="$(dirname "$0")"
-. "$SCRIPTDIR/helper-functions.sh"
 
 invoke mount -o loop "$ROOTIMAGE" "$NEWROOT"
 
