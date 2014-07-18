@@ -1,0 +1,2 @@
+ROOTIMAGE=/sdcard/LinuxOnAndroid/debian-8.SMALL.ext4.img
+NEWROOT=/data/local/mnt/debian-8.SMALL.ext4
