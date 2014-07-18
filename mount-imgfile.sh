@@ -5,6 +5,7 @@
 ROOTIMAGE="$1"
 NEWROOT="$2"
 
+invoke mkdir -p "$NEWROOT"
 invoke mount -o loop "$ROOTIMAGE" "$NEWROOT"
 
 # todo: implement fallback if mount -o loop fails: manually losetup -f, mknod, losetup, mount

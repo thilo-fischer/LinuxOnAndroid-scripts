@@ -1,0 +1,2 @@
+ROOTIMAGE=/sdcard/LinuxOnAndroid/ubuntu-13.10.CORE.ext4.img
+NEWROOT=/data/local/mnt/ubuntu-13.10.CORE.ext4
