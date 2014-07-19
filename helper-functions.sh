@@ -32,5 +32,7 @@ function variant_file {
 function call_script {
   SCRIPT="$1"
   shift
-  "$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" $*
+  source "$(variant_file "$SCRIPT")" "$VARIANT" $*
+  # Below is commented out the code for the alternate approach where subscripts get invoked instead of being sourced.
+  #"$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" $*
 }

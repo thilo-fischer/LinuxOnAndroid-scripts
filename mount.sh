@@ -2,6 +2,8 @@
 
 . "$1/scriptenv.sh"
 
+NEWROOT="$1"
+
 invoke mount -t devpts devpts $NEWROOT/dev/pts
 invoke mount -t proc proc $NEWROOT/proc
 invoke mount -t sysfs sysfs $NEWROOT/sys
