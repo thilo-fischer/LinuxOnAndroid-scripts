@@ -102,11 +102,13 @@ fi
 
 chroot)
 call_script chroot.sh "$NEWROOT" $*
+die_on_error "failed to run command in LoA environment"
 ;;
 
 
 shell)
 call_script shell.sh "$NEWROOT"
+die_on_error "failed to start shell in LoA environment"
 ;;
 
 
