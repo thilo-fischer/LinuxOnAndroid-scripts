@@ -29,7 +29,7 @@ function variant_file {
   echo "$SCRIPTDIR/$SUBDIR/$1"
 }
 
-function call_script {
+function run_script {
   SCRIPT="$1"
   shift
   source "$(variant_file "$SCRIPT")" "$VARIANT" $*

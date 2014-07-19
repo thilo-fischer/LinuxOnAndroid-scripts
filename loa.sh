@@ -79,35 +79,35 @@ grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
 
 startup)
 if [ -n "$ROOTIMAGE" ]; then
-	call_script mount-image.sh "$ROOTIMAGE" "$NEWROOT"
+	run_script mount-image.sh "$ROOTIMAGE" "$NEWROOT"
 	die_on_error "failed to mount the loop device"
 fi
 
-call_script mount.sh "$NEWROOT"
+run_script mount.sh "$NEWROOT"
 die_on_error "failed processing the configured mount commands"
 ;;
 
 
 shutdown)
 # TODO Check for open chroot-shells ?
-call_script umount.sh "$NEWROOT"
+run_script umount.sh "$NEWROOT"
 die_on_error "failed processing the configured umount commands"
 
 if [ -n "$ROOTIMAGE" ]; then	
-  call_script umount-image.sh "$ROOTIMAGE"
+  run_script umount-image.sh "$ROOTIMAGE"
 	die_on_error "failed to tear down the according loop device"
 fi
 ;;
 
 
 chroot)
-call_script chroot.sh "$NEWROOT" $*
+run_script chroot.sh "$NEWROOT" $*
 die_on_error "failed to run command in LoA environment"
 ;;
 
 
 shell)
-call_script shell.sh "$NEWROOT"
+run_script shell.sh "$NEWROOT"
 die_on_error "failed to start shell in LoA environment"
 ;;
 
