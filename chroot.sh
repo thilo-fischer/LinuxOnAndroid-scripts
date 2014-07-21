@@ -11,4 +11,4 @@ export PATH=/bin:/usr/bin:/usr/local/bin:/sbin:/usr/sbin:/usr/local/sbin
 export USER=root
 export HOME=/root
 
-$CHROOT "$NEWROOT" $*
+$CHROOT "$NEWROOT" "$@"

@@ -5,12 +5,19 @@
 # setup by configuring those smaller scripts. Several LoA environments can be maintained in parallel
 # by putting the specific parts configurations for one environment into dedicated variant directory.
 
-SCRIPTDIR="$(dirname "$0")"
+# Has the script been called or in it being sourced?
+if [ "$(basename "$0" .sh)" != "loa" ]; then
+	echo "Script must be called (run within its own shell instance), it cannot be sourced. (Call it like \`sh loa.sh' if it resides on a partition where you cannot \`chmod a+x loa.sh'.)" >&2
+	#false
+	return 1
+fi
+
+SCRIPTDIR="$(dirname "$(readlink -f "$0")")"
 . "$SCRIPTDIR/helper-functions.sh"
 
 
 # will only work if busybox is available
-BBDIR="$(which busybox)"
+BBDIR="$(dirname "$(which busybox)")"
 die_on_error "Could not find busybox in PATH."
 # favor busybox commands over Android specific vensions
 PATH="$BBDIR:$PATH"
@@ -101,12 +108,14 @@ fi
 
 
 chroot)
-run_script chroot.sh "$NEWROOT" $*
+# TODO check if environment is ready yet, i.e. if statup has been run
+run_script chroot.sh "$NEWROOT" "$@"
 die_on_error "failed to run command in LoA environment"
 ;;
 
 
 shell)
+# TODO check if environment is ready yet, i.e. if statup has been run
 run_script shell.sh "$NEWROOT"
 die_on_error "failed to start shell in LoA environment"
 ;;

@@ -17,7 +17,7 @@ fi
 }
 
 function invoke {
-	eval $*
+	eval "$@"
 	die_on_error "invokation of \`$*' failed"
 }
 
@@ -32,7 +32,8 @@ function variant_file {
 function run_script {
   SCRIPT="$1"
   shift
-  source "$(variant_file "$SCRIPT")" "$VARIANT" $*
+  SCRIPTFILE="$(variant_file "$SCRIPT")"
+  source "$SCRIPTFILE" "$SCRIPTDIR" "$SCRIPTFILE" "$@"
   # Below is commented out the code for the alternate approach where subscripts get invoked instead of being sourced.
-  #"$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" $*
+  #"$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" "$@"
 }
