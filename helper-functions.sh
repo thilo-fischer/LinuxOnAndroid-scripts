@@ -17,13 +17,13 @@ fi
 }
 
 function invoke {
-	eval "$@"
+	"$@"
 	die_on_error "invokation of \`$*' failed"
 }
 
 function variant_file {
   SUBDIR="$VARIANT"
-  while [ "$SUBDIR" != "." -a ! -f "$DIR/$SUBDIR/$1" ]; do
+  while [ "$SUBDIR" != "." -a ! -f "$SCRIPTDIR/$SUBDIR/$1" ]; do
     SUBDIR="$(dirname "$SUBDIR")"
   done
   echo "$SCRIPTDIR/$SUBDIR/$1"

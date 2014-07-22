@@ -27,11 +27,19 @@ function print_usage {
 }
 
 #
-# Parse commandline
+# Default values
 #
 
+# command line parameters
 TASK="shell"
 VARIANT="."
+
+# config file (envvars) defaults
+SHELLCOMMAND="/bin/bash -"
+
+#
+# Parse commandline
+#
 
 # TODO detect when incompatible arguments are given on the command line
 while [ $# -gt 0 ]; do
@@ -86,7 +94,7 @@ grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
 
 startup)
 if [ -n "$ROOTIMAGE" ]; then
-	run_script mount-image.sh "$ROOTIMAGE" "$NEWROOT"
+	run_script mount-imgfile.sh "$ROOTIMAGE" "$NEWROOT"
 	die_on_error "failed to mount the loop device"
 fi
 
@@ -101,7 +109,7 @@ run_script umount.sh "$NEWROOT"
 die_on_error "failed processing the configured umount commands"
 
 if [ -n "$ROOTIMAGE" ]; then	
-  run_script umount-image.sh "$ROOTIMAGE"
+  run_script umount-imgfile.sh "$ROOTIMAGE"
 	die_on_error "failed to tear down the according loop device"
 fi
 ;;
@@ -116,7 +124,7 @@ die_on_error "failed to run command in LoA environment"
 
 shell)
 # TODO check if environment is ready yet, i.e. if statup has been run
-run_script shell.sh "$NEWROOT"
+run_script shell.sh "$NEWROOT" "$SHELLCOMMAND"
 die_on_error "failed to start shell in LoA environment"
 ;;
 

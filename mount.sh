@@ -4,25 +4,37 @@
 
 NEWROOT="$1"
 
-invoke mount -t devpts devpts $NEWROOT/dev/pts
-invoke mount -t proc proc $NEWROOT/proc
-invoke mount -t sysfs sysfs $NEWROOT/sys
-invoke mount -o bind /sdcard $NEWROOT/sdcard
-invoke mount -t tmpfs tmpfs $NEWROOT/tmp # ??
+function peek_mount {
+	DEVICE="$1"
+	MOUNTPOINT="$NEWROOT$2"
+	shift; shift
+	# Don't fail if device is already mounted at the given mountpoint
+  # TODO grep
+	#grep "\($DEVICE|/dev/fuse\s\+$MOUNTPOINT" /proc/mounts >/dev/null 2>&1 || 
+	grep "$MOUNTPOINT" /proc/mounts >/dev/null 2>&1 || \
+		mount "$@" "$DEVICE" "$MOUNTPOINT"
+	die_on_error "failed to mount \`$DEVICE'"
+}
+
+peek_mount devpts  /dev/pts -t devpts
+peek_mount proc    /proc    -t proc
+peek_mount sysfs   /sys     -t sysfs
+peek_mount /sdcard /sdcard  -o bind
+peek_mount tmpfs   /tmp     -t tmpfs # ??
 
 #if [[ ! -d $NEWROOT/root/cfg ]]; then mkdir $NEWROOT/root/cfg; fi
-#invoke mount -o bind $(dirname $ROOTIMAGE) $NEWROOT/root/cfg
+#peek_mount -o bind $(dirname $ROOTIMAGE) $NEWROOT/root/cfg
 
 #
 # fixme: do not mount both to the same location! mount to /mnt or /media?
 #
 if [ -d /sdcard/external_sd ]; then
-	invoke mount -o bind /sdcard/external_sd  $NEWROOT/external_sd
+	peek_mount /sdcard/external_sd /external_sd -o bind
 fi
 if [ -d /Removable/MicroSD ]; then
-	invoke mount -o bind /Removable/MicroSD  $NEWROOT/external_sd
+	peek_mount /Removable/MicroSD /external_sd -o bind
 fi
 # This is for the HD version of the Archos 70 internet tablet, may be the same for the SD card edition but i dont know.
 if [ -d /storage ]; then
-	invoke mount -o bind /storage  $NEWROOT/external_sd
+	peek_mount /storage /external_sd -o bind
 fi

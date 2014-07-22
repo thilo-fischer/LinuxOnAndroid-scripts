@@ -10,7 +10,8 @@ LOOPDEVICE="$(losetup -a | grep -F "$IMAGEFILE" | cut -f1 -d:)"
 
 if [ -n "$LOOPDEVICE" ]; then
 
-  MOUNTPOINT="$(echo "$(grep -E "^\s*$LOOPDEVICE\s" /proc/mounts)")"
+	# todo (?) vulnerable for filenames containing spaces
+  MOUNTPOINT="$(grep -E "^\s*$LOOPDEVICE\s" /proc/mounts | awk '{print $2}')"
   
   if [ -n "$MOUNTPOINT" ]; then
     umount "$MOUNTPOINT"
