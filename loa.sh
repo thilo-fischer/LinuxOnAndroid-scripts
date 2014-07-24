@@ -76,7 +76,7 @@ done
 # parse "config file"
 #
 
-. "$(variant_file envvar)"
+. "$(variant_file "$VARIANT" envvar)"
 
 
 #
@@ -87,10 +87,10 @@ case $TASK in
 
 status)
 # TODO
-"$(variant_file lostatus.sh)"
+"$(variant_file "$VARIANT" lostatus.sh)"
 echo -n "LoA root fs: "
 grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
-"$(variant_file mountstatus.sh)"
+"$(variant_file "$VARIANT" mountstatus.sh)"
 ;;
 
 

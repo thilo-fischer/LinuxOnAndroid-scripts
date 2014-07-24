@@ -29,14 +29,15 @@ function invoke {
 	die_on_error "invokation of \`$*' failed"
 }
 
-# Find the script applicable to the selected variant matching the provided name.
-# 1 parameter: name of the script
+# Find the script applicable to the selected variant matching the given name.
+# 1st parameter: variant to which to find the appropriate script
+# 2nd parameter: name of the script
 function variant_file {
-  SUBDIR="$VARIANT"
-  while [ "$SUBDIR" != "." -a ! -f "$SCRIPTDIR/$SUBDIR/$1" ]; do
+  SUBDIR="$1"
+  while [ "$SUBDIR" != "." -a ! -f "$SCRIPTDIR/$SUBDIR/$2" ]; do
     SUBDIR="$(dirname "$SUBDIR")"
   done
-  echo "$SCRIPTDIR/$SUBDIR/$1"
+  echo "$SUBDIR/$2"
 }
 
 # Run the script given by the first parameter with the arguments given by the remaining parameters.
@@ -51,9 +52,26 @@ function variant_file {
 function run_script {
   SCRIPT="$1"
   shift
-  SCRIPTFILE="$(variant_file "$SCRIPT")"
-  source "$SCRIPTFILE" "$SCRIPTDIR" "$SCRIPTFILE" "$@"
+  SCRIPTFILE="$(variant_file "$VARIANT" "$SCRIPT")"
+  source "$SCRIPTDIR/$SCRIPTFILE" "$SCRIPTDIR" "$SCRIPTFILE" "$@"
   # Below is commented out the code for the alternate approach where subscripts get invoked instead of being sourced.
   #export $PATH # ??
-  #"$(variant_file "$SCRIPT")" "$SCRIPTDIR" "$VARIANT" "$@"
+  #"$(variant_file "$SCRIPTDIR/$SCRIPT")" "$SCRIPTDIR" "$VARIANT" "$@"
+}
+
+# Invoke the same script as the current one one level higher in the variant hierarchie.
+# arbitrary number of parameters: Arguments to be passed to the script.
+function super {
+	SUPERDIR="$(dirname "$SELF")"
+	# strip of any potential trailing "/."
+	while [ "$(basename "$SUPERDIR")" = "." ]; do
+		SUPERDIR="$(dirname "$SUPERDIR")"
+		if [ "$SUPERDIR" = "." ]; then
+			die "No such script: super of \`$SELF'."
+		fi
+	done
+	# get parent directory
+	SUPERDIR="$(dirname "$SUPERDIR")"
+	# find variant file starting from parent directory and start it
+	run_script "$(variant_file "$SUPERDIR" "$(basename "$SELF")")" "$@"
 }
