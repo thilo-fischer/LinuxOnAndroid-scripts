@@ -2,6 +2,6 @@
 
 . "$1/scriptenv.sh"
 
-echo "starting a shell to an ubuntu environment"
+echo "starting a shell to a debain environment"
 
 super "$@"
