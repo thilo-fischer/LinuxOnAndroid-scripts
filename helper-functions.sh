@@ -73,5 +73,5 @@ function super {
 	# get parent directory
 	SUPERDIR="$(dirname "$SUPERDIR")"
 	# find variant file starting from parent directory and start it
-	run_script "$(variant_file "$SUPERDIR" "$(basename "$SELF")")" "$@"
+	VARIANT="$SUPERDIR" run_script "$(basename "$SELF")" "$@"
 }
