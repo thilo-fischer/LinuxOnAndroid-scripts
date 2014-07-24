@@ -1,2 +1,5 @@
+# Image that contains the root file system.
+# If not specified (i.e. not present or commented out) root file system will be assumed to be present as a subtree within a directory of the regular Andriod file system.
 #ROOTIMAGE=/sdcard/LinuxOnAndroid/....img
+# Path to the root file system. (Mountpoint of the image file if root file system resides in an image file.)
 NEWROOT=/data/local/debian-8.LARGE

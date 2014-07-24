@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Function run_script from helper_functions.sh implements the mechanism to pass control to subscripts
-# (providing an abstraction from the actual invokation).
+# Set up the environment subscripts may expect and use.
+# 1st parameter: Base directory where to find the scripts.
+# 2nd parameter: Pathname of the current script.
 
 SCRIPTDIR="$1"
 shift
@@ -15,5 +16,4 @@ shift
 #shift
 #VARIANT="$1"
 #shift
-#export $PATH
 #. "$SCRIPTDIR/helper-functions.sh"

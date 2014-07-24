@@ -1,9 +1,13 @@
 #!/bin/sh
 
 # Open a LinuxOnAndroid shell or set up or tear down the according environment to start such shell.
-# The single steps are delegated to other, smaller scripts. Process can be adapted to a specific LoA
+# The single steps are delegated to other, smaller subscripts. Process can be adapted to a specific LoA
 # setup by configuring those smaller scripts. Several LoA environments can be maintained in parallel
 # by putting the specific parts configurations for one environment into dedicated variant directory.
+
+function print_usage {
+	echo "Usage: $(basename "$0") [VARIANT] [--startup|--shutdown|--status|--chroot [PROG ARGS]]"
+}
 
 # Has the script been called or in it being sourced?
 if [ "$(basename "$0" .sh)" != "loa" ]; then
@@ -12,19 +16,16 @@ if [ "$(basename "$0" .sh)" != "loa" ]; then
 	return 1
 fi
 
+# Base directory of all subscripts
 SCRIPTDIR="$(dirname "$(readlink -f "$0")")"
+
 . "$SCRIPTDIR/helper-functions.sh"
 
-
-# will only work if busybox is available
+# The scripts will only work if busybox is available
 BBDIR="$(dirname "$(which busybox)")"
 die_on_error "Could not find busybox in PATH."
 # favor busybox commands over Android specific vensions
 PATH="$BBDIR:$PATH"
-
-function print_usage {
-	echo "Usage: $(basename "$0") [--startup|--shutdown|--status] [VARIANT] [--chroot [PROG ARGS]]"
-}
 
 #
 # Default values
@@ -36,6 +37,7 @@ VARIANT="."
 
 # config file (envvars) defaults
 SHELLCOMMAND="/bin/bash -"
+
 
 #
 # Parse commandline
@@ -84,7 +86,7 @@ done
 case $TASK in
 
 status)
-# fixme
+# TODO
 "$(variant_file lostatus.sh)"
 echo -n "LoA root fs: "
 grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
@@ -97,7 +99,6 @@ if [ -n "$ROOTIMAGE" ]; then
 	run_script mount-imgfile.sh "$ROOTIMAGE" "$NEWROOT"
 	die_on_error "failed to mount the loop device"
 fi
-
 run_script mount.sh "$NEWROOT"
 die_on_error "failed processing the configured mount commands"
 ;;
@@ -107,7 +108,6 @@ shutdown)
 # TODO Check for open chroot-shells ?
 run_script umount.sh "$NEWROOT"
 die_on_error "failed processing the configured umount commands"
-
 if [ -n "$ROOTIMAGE" ]; then	
   run_script umount-imgfile.sh "$ROOTIMAGE"
 	die_on_error "failed to tear down the according loop device"
@@ -133,3 +133,5 @@ die_on_error "failed to start shell in LoA environment"
 scripting_error
 
 esac
+
+exit 0
