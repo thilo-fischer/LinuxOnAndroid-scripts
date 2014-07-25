@@ -9,10 +9,9 @@ function print_usage {
 	echo "Usage: $(basename "$0") [VARIANT] [--startup|--shutdown|--status|--chroot [PROG ARGS]]"
 }
 
-# Has the script been called or in it being sourced?
+# The script should be called, not sourced. Warn and abort if it is likely we are getting sourced.
 if [ "$(basename "$0" .sh)" != "loa" ]; then
 	echo "Script must be called (run within its own shell instance), it cannot be sourced. (Call it like \`sh loa.sh' if it resides on a partition where you cannot \`chmod a+x loa.sh'.)" >&2
-	#false
 	return 1
 fi
 
@@ -76,7 +75,7 @@ done
 # parse "config file"
 #
 
-. "$(variant_file "$VARIANT" envvar)"
+source "$SCRIPTDIR/$(variant_file "$VARIANT" envvar)"
 
 
 #
