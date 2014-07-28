@@ -5,6 +5,19 @@
 # setup by configuring those smaller scripts. Several LoA environments can be maintained in parallel
 # by putting the specific parts configurations for one environment into dedicated variant directory.
 
+# The following environment variables will be available at the subscripts:
+# * SCRIPTDIR - base directory in which to find all the loa scripts
+# * SELF - path of the subscript currently running (relative to SCRIPTDIR)
+# * VARIANT - name of the variant to chose
+#
+# Other environment variables that might be visible at the subscripts are not intended
+# to be used at the subscript.
+#
+# All functions defined in helper_functions.sh shall be available in the subscripts.
+#
+# Every subscript should source "$SCRIPTDIR/scriptenv.sh" at its beginning to assure
+# these variables and functions are made available in its environment.
+
 function print_usage {
 	echo "Usage: $(basename "$0") [VARIANT] [--startup|--shutdown|--status|--chroot [PROG ARGS]]"
 }
@@ -123,7 +136,8 @@ die_on_error "failed to run command in LoA environment"
 
 shell)
 # TODO check if environment is ready yet, i.e. if statup has been run
-run_script shell.sh "$NEWROOT" "$SHELLCOMMAND"
+# TODO use string array for SHELLCOMMAND ??
+run_script shell.sh "$NEWROOT" $SHELLCOMMAND
 die_on_error "failed to start shell in LoA environment"
 ;;
 

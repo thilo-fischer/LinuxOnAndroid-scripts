@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. "$1/scriptenv.sh"
+. "$SCRIPTDIR/scriptenv.sh"
 
 NEWROOT="$1"
 

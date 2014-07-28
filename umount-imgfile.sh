@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. "$1/scriptenv.sh"
+. "$SCRIPTDIR/scriptenv.sh"
 
 IMAGEFILE="$1"
 

@@ -46,14 +46,11 @@ function variant_file {
 # providing an abstraction from the actual invokation mechanism.
 # 1st parameter: Name of the script to be invoked.
 # arbitrary number of additional parameters: Arguments passed to the script.
-# TODO 1: restore SELF after script has been run
-# TODO 2: scriptenv.sh and providing of the parameters consumed by it seems not necessary ...
-#   ===> SELF="$SCRIPTDIR" source "$SCRIPTFILE" "$@" # ??
 function run_script {
   SCRIPT="$1"
   shift
-  SCRIPTFILE="$(variant_file "$VARIANT" "$SCRIPT")"
-  source "$SCRIPTDIR/$SCRIPTFILE" "$SCRIPTDIR" "$SCRIPTFILE" "$@"
+  SUBSCRIPT="$(variant_file "$VARIANT" "$SCRIPT")"
+  SELF="$SUBSCRIPT" source "$SCRIPTDIR/$SUBSCRIPT" "$@"
   # Below is commented out the code for the alternate approach where subscripts get invoked instead of being sourced.
   #export $PATH # ??
   #"$(variant_file "$SCRIPTDIR/$SCRIPT")" "$SCRIPTDIR" "$VARIANT" "$@"

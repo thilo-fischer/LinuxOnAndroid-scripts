@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. "$1/scriptenv.sh"
+. "$SCRIPTDIR/scriptenv.sh"
 
 # which unmounts are necessary and which will be done implicitly when unmounting NEWROOT ? (esp. binds, proc etc.)
 
