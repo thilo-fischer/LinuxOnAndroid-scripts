@@ -19,7 +19,7 @@
 # these variables and functions are made available in its environment.
 
 function print_usage {
-	echo "Usage: $(basename "$0") [VARIANT] [--startup|--shutdown|--status|--chroot [PROG ARGS]]"
+	echo "Usage: $(basename "$0") [VARIANT] [--startup|--shutdown|--status|--list|--chroot [PROG ARGS]]"
 }
 
 # The script should be called, not sourced. Warn and abort if it is likely we are getting sourced.
@@ -71,6 +71,9 @@ while [ $# -gt 0 ]; do
 	--status|-t)
 	TASK="status"
 	;;
+	--list|-l)
+	TASK="list"
+	;;
 	--chroot|-r)
 	TASK="chroot"
 	shift
@@ -97,15 +100,6 @@ source "$SCRIPTDIR/$(variant_file "$VARIANT" envvar)"
 
 case $TASK in
 
-status)
-# TODO
-"$(variant_file "$VARIANT" lostatus.sh)"
-echo -n "LoA root fs: "
-grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
-"$(variant_file "$VARIANT" mountstatus.sh)"
-;;
-
-
 startup)
 if [ -n "$ROOTIMAGE" ]; then
 	run_script mount-imgfile.sh "$ROOTIMAGE" "$NEWROOT"
@@ -124,6 +118,20 @@ if [ -n "$ROOTIMAGE" ]; then
   run_script umount-imgfile.sh "$ROOTIMAGE"
 	die_on_error "failed to tear down the according loop device"
 fi
+;;
+
+
+status)
+# TODO
+"$(variant_file "$VARIANT" lostatus.sh)"
+echo -n "LoA root fs: "
+grep -E "^\s*$LOOPDEVICE\s+$NEWROOT\s" /proc/mounts || echo "not mounted."
+"$(variant_file "$VARIANT" mountstatus.sh)"
+;;
+
+
+list)
+find "$SCRIPTDIR" -type d -print
 ;;
 
 
