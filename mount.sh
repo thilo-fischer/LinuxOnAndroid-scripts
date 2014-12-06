@@ -19,9 +19,10 @@ function peek_mount {
 peek_mount proc    /proc    -t proc
 peek_mount sysfs   /sys     -t sysfs
 peek_mount /dev    /dev     -o bind
-#peek_mount devpts  /dev/pts -t devpts
+peek_mount devpts  /dev/pts -t devpts
 peek_mount /sdcard /sdcard  -o bind
 peek_mount tmpfs   /tmp     -t tmpfs # ??
+peek_mount /Removable /Removable -o rbind
 
 #if [[ ! -d $NEWROOT/root/cfg ]]; then mkdir $NEWROOT/root/cfg; fi
 #peek_mount -o bind $(dirname $ROOTIMAGE) $NEWROOT/root/cfg

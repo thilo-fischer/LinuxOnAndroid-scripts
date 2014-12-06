@@ -14,11 +14,13 @@ function try_umount {
 	die_on_error "failed to unmount \`$MOUNTPOINT'"
 }
 
-try_umount /dev/pts
 try_umount /proc
 try_umount /sys
+try_umount /dev
+try_umount /dev/pts
 try_umount /sdcard
 try_umount /tmp
+try_umount /Removable
 
 #try_umount /root/cfg
 
